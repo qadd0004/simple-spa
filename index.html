@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Simple Movie SPA</title>
     <link rel="stylesheet" href="css/main.css" />
-    <script src="./js/iconic.min.js"></script>
+    <script src="./js/iconic.min.js" defer></script>
     <script src="js/main.js" defer></script>
   </head>
   <body>
-    <header>
+    <header id="header">
       <div class="left">
         <div class="ionic" id="logo">
           <svg
@@ -46,7 +46,7 @@
             </g>
           </svg>
         </div>
-        <h1>Actors &amp; Shows</h1>
+        <h1><span>Actors</span> &amp; Shows</h1>
       </div>
       <form class="right">
         <input type="search" id="search" value="" placeholder="Actor Name" />
@@ -55,7 +55,7 @@
         </button>
       </form>
     </header>
-    <main>
+    <main id="main">
       <section id="instructions" class="active" data-role="page">
         <h2>How to Start</h2>
         <div class="content">
@@ -75,19 +75,12 @@
       </section>
       <section id="actors" data-role="page">
         <h2>Actors</h2>
-        <div class="content" id="actorsList">
-          <!-- <div class="card" data-id="">
-            <div class="picture">
-              <img src="" alt="person name image" />
-            </div>
-            <h3 class="name">Person Name</h3>
-            <p class="pop">popularity</p>
-          </div> -->
-        </div>
+        <div class="content" id="actorsList"></div>
       </section>
       <section id="media" data-role="page">
         <h2>Media</h2>
-        <div class="content" id="titles"></div>
+        <h3 id="known"></h3>
+        <div class="content" id="titles" class=""></div>
       </section>
     </main>
   </body>
