@@ -198,7 +198,9 @@ const MEDIA = {
       picture.classList.add("picture");
 
       let image = document.createElement("img");
-      image.src = `${SEARCH["config"]["images"]["secure_base_url"]}${SEARCH["config"]["images"]["poster_sizes"][2]}${poster}`;
+      if (poster) {
+        image.src = `${SEARCH["config"]["images"]["secure_base_url"]}${SEARCH["config"]["images"]["poster_sizes"][2]}${poster}`;
+      }
       image.alt = name;
 
       picture.append(image);
@@ -213,7 +215,9 @@ const MEDIA = {
       year.classList.add("pop");
       year.textContent = yearShown;
       card.append(year);
-      list.append(card);
+      if (poster) {
+        list.append(card);
+      }
     });
   },
   setDimensions() {

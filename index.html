@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Simple Movie SPA</title>
     <link rel="stylesheet" href="css/main.css" />
-    <script src="./js/iconic.min.js" defer></script>
+    <script src="./js/iconic.min.js"></script>
     <script src="js/main.js" defer></script>
   </head>
   <body>
@@ -51,7 +51,11 @@
       <form class="right">
         <input type="search" id="search" value="" placeholder="Actor Name" />
         <button id="btnSearch" class="pulse">
-          <img data-src="./img/magnifying-glass.svg" class="iconic" />
+          <img
+            src="./img/magnifying-glass.svg"
+            data-src="/img/magnifying-glass.svg"
+            class="iconic"
+          />
         </button>
       </form>
     </header>
