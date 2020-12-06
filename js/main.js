@@ -4,6 +4,7 @@
 //and connections between the other components
 
 const APP = {
+  name: null,
   init() {
     //this function runs when the page loads
     let searchBox = document.querySelector("#search");
@@ -23,6 +24,7 @@ const APP = {
       searchBtn.style.outline = "none";
       PAGES.switchPage(PAGES["currentPage"], PAGES["actors"]);
       if (name) {
+        APP["name"] = name;
         SEARCH.getConfiguration();
         ACTORS.getActor(name);
         searchBox.value = "";
@@ -77,6 +79,8 @@ const ACTORS = {
         let image = document.createElement("img");
         if (actorObject.profile_path) {
           image.src = `${config["images"]["secure_base_url"]}${config["images"]["profile_sizes"][2]}${actorObject["profile_path"]}`;
+        } else {
+          image.src = "";
         }
         image.alt = actorObject.name;
 
@@ -100,13 +104,15 @@ const ACTORS = {
           list.append(card);
           PAGES.switchPage(PAGES["currentPage"], PAGES["actors"]);
         } else if (!actorObject.profile_path && list.children.length == 0) {
-          h3.textContent = `As ${
-            actorObject.name
-          } has no profile picture no search result's cards will be shown for ${
-            actorObject.gender === 2 ? "him" : "her"
-          }`;
+          h3.textContent = `There are ${
+            SEARCH["results"][APP["name"]].length
+          } result(s) for '${
+            APP.name
+          }' search term, only those with profile/poster pictures are shown here if any`;
           list.append(h3);
           PAGES.switchPage(PAGES["currentPage"], PAGES["actors"]);
+        } else {
+          h3.innerHTML = "";
         }
 
         card.addEventListener("click", (ev) => MEDIA.getMedia(ev, actorObject));
