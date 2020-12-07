@@ -22,7 +22,14 @@ const APP = {
       ev.preventDefault();
       name = searchBox.value;
       searchBtn.style.outline = "none";
-      SEARCH.getConfiguration();
+
+      //check if the DB configuration has already been retrieved, if not fetch it
+      if (!SEARCH.config) {
+        SEARCH.getConfiguration();
+      } else {
+        // inspecting the validity of the stored configuration
+        console.log(SEARCH.config);
+      }
 
       if (name) {
         APP["name"] = name;
