@@ -22,12 +22,19 @@ const APP = {
       ev.preventDefault();
       name = searchBox.value;
       searchBtn.style.outline = "none";
-      PAGES.switchPage(PAGES["currentPage"], PAGES["actors"]);
+      SEARCH.getConfiguration();
+
       if (name) {
         APP["name"] = name;
-        SEARCH.getConfiguration();
-        ACTORS.getActor(name);
         searchBox.value = "";
+        /*check first if the same search was already stored locally, if so, skip the fetch, and get its data from SEARCH.results immediately for faster app response avoiding unnecessary http requests/API calls */
+        if (SEARCH.results.name == undefined) {
+          ACTORS.getActor(name, (locally = false));
+          PAGES.switchPage(PAGES["currentPage"], PAGES["actors"]);
+        } else {
+          ACTORS.getActor(name, (locally = true));
+          PAGES.switchPage(PAGES["currentPage"], PAGES["actors"]);
+        }
       }
     });
   },
@@ -35,25 +42,29 @@ const APP = {
 
 //actors is for changes connected to content in the actors section
 const ACTORS = {
-  getActor(actor) {
-    let url = `https://api.themoviedb.org/3/search/person?api_key=803734898f6659797a0f7e7dc6a24147&language=en-US&query=${actor}&page=1&include_adult=false`;
+  getActor(actor, locally) {
+    if (!locally) {
+      let url = `https://api.themoviedb.org/3/search/person?api_key=803734898f6659797a0f7e7dc6a24147&language=en-US&query=${actor}&page=1&include_adult=false`;
 
-    fetch(url)
-      .then(function (response) {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error("Bad response", response.status);
-        }
-      })
-      .then(function (data) {
-        SEARCH.results[actor] = data.results;
-        ACTORS.card(SEARCH.results[actor]);
-      })
-      .catch((err) => {
-        //handle the error
-        alert(err);
-      });
+      fetch(url)
+        .then(function (response) {
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error("Bad response", response.status);
+          }
+        })
+        .then(function (data) {
+          SEARCH.results[actor] = data.results;
+          ACTORS.card(SEARCH.results[actor]);
+        })
+        .catch((err) => {
+          //handle the error
+          alert(err);
+        });
+    } else {
+      ACTORS.card(SEARCH.results[actor]);
+    }
   },
 
   card(result, config) {
