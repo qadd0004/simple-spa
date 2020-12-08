@@ -20,7 +20,7 @@ const APP = {
 
     searchBtn.addEventListener("click", (ev) => {
       ev.preventDefault();
-      name = searchBox.value;
+      name = searchBox.value.trim();
       searchBtn.style.outline = "none";
 
       //check if the DB configuration has already been retrieved, if not fetch it
