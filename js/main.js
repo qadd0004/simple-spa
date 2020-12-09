@@ -71,6 +71,7 @@ const ACTORS = {
         })
         .then(function (data) {
           SEARCH.results[actor] = data.results;
+          STORAGE.storeSearch(data.results, actor);
           ACTORS.card(SEARCH.results[actor]);
         })
         .catch((err) => {
@@ -78,11 +79,14 @@ const ACTORS = {
           alert(err);
         });
     } else {
-      ACTORS.card(SEARCH.results[actor]);
+      let actor = `${STORAGE.user}-SPA-${actor}`;
+      //ACTORS.card(localStorage[actor]);
+      ACTORS.card(localStorage[actor]);
     }
   },
 
   card(result, config) {
+    console.log(result[0]);
     config = SEARCH.config;
     if (result.length === 0) {
       alert(
@@ -274,7 +278,13 @@ const PAGES = {
 
 //storage is for working with localstorage
 const STORAGE = {
-  //this will be used in Assign 4
+  user: "qadd0004",
+  storeSearch(search, actor) {
+    //console.log(actor);
+    actor = `${STORAGE.user}-SPA-${actor}`;
+    let objectToStore = JSON.stringify({ [actor]: search });
+    localStorage.setItem(actor, objectToStore);
+  },
 };
 
 //nav is for anything connected to the history api and location
