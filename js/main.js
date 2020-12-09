@@ -280,7 +280,6 @@ const PAGES = {
 const STORAGE = {
   user: "qadd0004",
   storeSearch(search, actor) {
-    //console.log(actor);
     actor = `${STORAGE.user}-SPA-${actor}`;
     let objectToStore = JSON.stringify({ [actor]: search });
     localStorage.setItem(actor, objectToStore);
