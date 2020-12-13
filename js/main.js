@@ -172,8 +172,8 @@ const SEARCH = {
       })
       .then(function (data) {
         SEARCH.config = data;
-        console.log(SEARCH.user, data);
-        localStorage.setItem(SEARCH.user, data);
+        console.log(STORAGE.user, data);
+        localStorage.setItem(STORAGE.user, JSON.stringify(data));
       })
       .catch((err) => {
         //handle the error
