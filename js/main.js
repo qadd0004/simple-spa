@@ -113,7 +113,8 @@ const ACTORS = {
 
       let image = document.createElement("img");
       if (actorObject.profile_path) {
-        image.src = `${SEARCH.config["images"]["secure_base_url"]}${SEARCH.config["images"]["profile_sizes"][2]}${actorObject["profile_path"]}`;
+        let images = JSON.parse(localStorage[STORAGE.user]);
+        image.src = `${images["images"]["secure_base_url"]}${images["images"]["profile_sizes"][2]}${actorObject["profile_path"]}`;
       } else {
         image.src = "";
       }
