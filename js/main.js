@@ -7,6 +7,7 @@
 
 const APP = {
   name: null,
+  actor: null,
   init() {
     //this function runs when the page loads
     let searchBox = document.querySelector("#search");
@@ -33,19 +34,21 @@ const APP = {
 
       if (name) {
         APP["name"] = name;
+        APP["actor"] = `${STORAGE.user}-SPA-${name}`;
         searchBox.value = "";
 
         //check if the DB configuration has already been retrieved, if not fetch it
         if (!SEARCH.config) {
           SEARCH.getConfiguration();
         }
-
+        //let actor = `${STORAGE.user}-SPA-${name}`;
         /*check if the same search was already stored locally, if so, skip the fetch, and get its data from SEARCH.results immediately for faster app response avoiding unnecessary http requests/API calls */
-        if (SEARCH.results.name == undefined) {
+        if (localStorage[APP.actor] == undefined) {
           ACTORS.getActor(name, (locally = false));
           PAGES.switchPage(PAGES["currentPage"], PAGES["actors"]);
         } else {
-          ACTORS.getActor(name, (locally = true));
+          console.log("fetch locally - inside app.init");
+          ACTORS.getActor(APP.actor, (locally = true));
           PAGES.switchPage(PAGES["currentPage"], PAGES["actors"]);
         }
       } else {
@@ -71,22 +74,23 @@ const ACTORS = {
         })
         .then(function (data) {
           SEARCH.results[actor] = data.results;
-          STORAGE.storeSearch(data.results, actor);
-          ACTORS.card(SEARCH.results[actor]);
+          STORAGE.storeSearch(data.results, APP.actor);
+          ACTORS.card(data.results);
         })
         .catch((err) => {
           //handle the error
           alert(err);
         });
     } else {
-      let actor = `${STORAGE.user}-SPA-${actor}`;
+      console.log("fetch locally- inside get actor");
+      console.log(APP.actor);
       //ACTORS.card(localStorage[actor]);
-      ACTORS.card(localStorage[actor]);
+      ACTORS.card(JSON.parse(localStorage[APP.actor]));
     }
   },
 
-  card(result, config) {
-    console.log(result[0]);
+  card(result) {
+    console.log(result);
     config = SEARCH.config;
     if (result.length === 0) {
       alert(
@@ -109,7 +113,7 @@ const ACTORS = {
 
       let image = document.createElement("img");
       if (actorObject.profile_path) {
-        image.src = `${config["images"]["secure_base_url"]}${config["images"]["profile_sizes"][2]}${actorObject["profile_path"]}`;
+        image.src = `${SEARCH.config["images"]["secure_base_url"]}${SEARCH.config["images"]["profile_sizes"][2]}${actorObject["profile_path"]}`;
       } else {
         image.src = "";
       }
@@ -168,6 +172,8 @@ const SEARCH = {
       })
       .then(function (data) {
         SEARCH.config = data;
+        console.log(SEARCH.user, data);
+        localStorage.setItem(SEARCH.user, data);
       })
       .catch((err) => {
         //handle the error
@@ -280,8 +286,8 @@ const PAGES = {
 const STORAGE = {
   user: "qadd0004",
   storeSearch(search, actor) {
-    actor = `${STORAGE.user}-SPA-${actor}`;
-    let objectToStore = JSON.stringify({ [actor]: search });
+    console.log(search);
+    let objectToStore = JSON.stringify(search);
     localStorage.setItem(actor, objectToStore);
   },
 };

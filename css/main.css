@@ -21,6 +21,7 @@ body {
   background-color: hsl(20, 30%, 90%);
   text-align: center;
   max-width: 100vw;
+  position: relative;;
 }
 
 /*******************
@@ -131,14 +132,17 @@ header form {
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
+  max-width: 110%;
 }
 
 #instructions {
   display: none;
+  font-size: 1rem;
   font-weight: 500;
   max-width: 90%;
   position: absolute;
   left: 0.8rem;
+  top:  0.5rem;
   margin: 0rem auto;
 }
 
