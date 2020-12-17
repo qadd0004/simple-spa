@@ -8,8 +8,23 @@
 const APP = {
   name: null,
   actor: null,
+  actorId: null,
+  hash: "#",
+  homePage: "/#",
+  dataLocal: false,
   init() {
     //this function runs when the page loads
+
+    console.log(history);
+    NAV.handleAddress(APP.name);
+
+    window.onpopstate = function (event) {
+      console.log("history changed to: " + document.location.href);
+    };
+
+    window.addEventListener("hashchange", APP.hashChange);
+    console.log("haschange listener added");
+
     let searchBox = document.querySelector("#search");
     let searchBtn = document.querySelector("#btnSearch");
 
@@ -23,7 +38,7 @@ const APP = {
 
     searchBtn.addEventListener("click", (ev) => {
       ev.preventDefault();
-      name = searchBox.value.trim();
+      let name = searchBox.value.trim();
       searchBtn.style.outline = "none";
       PAGES.switchPage(PAGES["currentPage"], PAGES["actors"]);
 
@@ -32,7 +47,7 @@ const APP = {
         MEDIA.actorsBtn.removeEventListener("click", MEDIA.showActors);
       }
 
-      if (name) {
+      if (name !== "") {
         APP["name"] = name;
         APP["actor"] = `${STORAGE.user}-SPA-${name}`;
         searchBox.value = "";
@@ -41,20 +56,49 @@ const APP = {
         if (!SEARCH.config) {
           SEARCH.getConfiguration();
         }
-        //let actor = `${STORAGE.user}-SPA-${name}`;
-        /*check if the same search was already stored locally, if so, skip the fetch, and get its data from SEARCH.results immediately for faster app response avoiding unnecessary http requests/API calls */
+
+        /*check if the same search was already stored locally, if so, skip the fetch, and get its data from localStorage immediately for faster app response avoiding unnecessary http requests/API calls */
         if (localStorage[APP.actor] == undefined) {
-          ACTORS.getActor(name, (locally = false));
+          APP.dataLocal = false;
+          ACTORS.getActor(name, APP.dataLocal);
           PAGES.switchPage(PAGES["currentPage"], PAGES["actors"]);
         } else {
           console.log("fetch locally - inside app.init");
-          ACTORS.getActor(APP.actor, (locally = true));
+          APP.dataLocal = true;
+          ACTORS.getActor(APP.actor, APP.dataLocal);
+          //NAV.handleURL(name, APP.dataLocal);
           PAGES.switchPage(PAGES["currentPage"], PAGES["actors"]);
         }
       } else {
         return;
       }
     });
+  },
+
+  hashChange(ev) {
+    console.log("hasChange has been called");
+    console.log(ev);
+
+    APP.hash = location.hash;
+    console.log(APP.hash);
+
+    if (APP.hash) {
+      let parts = APP.hash.split("/");
+      console.log(parts);
+      switch (parts.length) {
+        //page details
+        case 1:
+          var page = PAGES["actors"];
+          break;
+        case 2:
+          page = PAGES["media"];
+          break;
+        default:
+          page = PAGES["instr"];
+      }
+    }
+    NAV.handleAddress();
+    //PAGES.switchPage(PAGES["currentPage"], page);
   },
 };
 
@@ -84,7 +128,6 @@ const ACTORS = {
     } else {
       console.log("fetch locally- inside get actor");
       console.log(APP.actor);
-      //ACTORS.card(localStorage[actor]);
       ACTORS.card(JSON.parse(localStorage[APP.actor]));
     }
   },
@@ -116,7 +159,7 @@ const ACTORS = {
         let images = JSON.parse(localStorage[STORAGE.user]);
         image.src = `${images["images"]["secure_base_url"]}${images["images"]["profile_sizes"][2]}${actorObject["profile_path"]}`;
       } else {
-        image.src = "";
+        image.src = "img/img-placeholder.png";
       }
       image.alt = actorObject.name;
 
@@ -135,22 +178,7 @@ const ACTORS = {
       popularity.innerHTML = "<span>&star;</span>".repeat(pop);
       card.append(popularity);
 
-      // check for image existence before appending card
-      if (actorObject.id && actorObject.profile_path) {
-        list.append(card);
-        PAGES.switchPage(PAGES["currentPage"], PAGES["actors"]);
-      } else if (!actorObject.profile_path && list.children.length == 0) {
-        h3.textContent = `There are ${
-          SEARCH["results"][APP["name"]].length
-        } result(s) for '${
-          APP.name
-        }' search term, only those with profile/poster pictures are shown here if any`;
-        list.append(h3);
-        PAGES.switchPage(PAGES["currentPage"], PAGES["actors"]);
-      } else {
-        h3.innerHTML = "";
-      }
-
+      list.append(card);
       card.addEventListener("click", (ev) => MEDIA.getMedia(ev, actorObject));
     });
   },
@@ -188,8 +216,10 @@ const SEARCH = {
 //media is for changes connected to content in the media section
 const MEDIA = {
   media: null,
+  actor: APP.name,
   actorsBtn: document.querySelector("#header h1 span"),
-  showActors() {
+  showActors(ev) {
+    ev.preventDefault();
     PAGES.switchPage(PAGES["currentPage"], PAGES["actors"]);
     MEDIA.removeActorsListener();
   },
@@ -199,10 +229,13 @@ const MEDIA = {
   },
 
   getMedia(ev, actor) {
+    ev.preventDefault();
     let h3 = document.querySelector("#media h3");
-    let clickedActorId = ev.currentTarget.getAttribute("data-id");
+    let clickedActorId = parseInt(ev.currentTarget.getAttribute("data-id"));
     // checking for Actor ID before retrieving his data
-    if (parseInt(clickedActorId) === actor.id) {
+    if (clickedActorId === actor.id) {
+      APP.actorId = clickedActorId;
+      NAV.handleAddress(APP.name, clickedActorId);
       h3.textContent = `${actor["name"]} is best known for:`;
 
       MEDIA.media = actor["known_for"];
@@ -213,6 +246,11 @@ const MEDIA = {
 
         MEDIA.actorsBtn.classList.add("act");
         MEDIA.actorsBtn.addEventListener("click", MEDIA.showActors);
+        history.pushState(
+          {},
+          "Actors",
+          `${APP.homePage}${APP.name}/${APP.actorId}`
+        );
       } else {
         alert("Actor's media shows/movies not found");
       }
@@ -242,6 +280,8 @@ const MEDIA = {
       let image = document.createElement("img");
       if (poster) {
         image.src = `${SEARCH["config"]["images"]["secure_base_url"]}${SEARCH["config"]["images"]["poster_sizes"][2]}${poster}`;
+      } else {
+        image.src = "img/img-placeholder.png";
       }
       image.alt = name;
 
@@ -257,9 +297,7 @@ const MEDIA = {
       year.classList.add("pop");
       year.textContent = yearShown;
       card.append(year);
-      if (poster) {
-        list.append(card);
-      }
+      list.append(card);
     });
   },
   setDimensions() {
@@ -277,9 +315,12 @@ const PAGES = {
   actors: document.querySelector("#actors"),
   media: document.querySelector("#media"),
   switchPage(prev, next) {
+    console.log(prev, next);
     prev.classList.remove("active");
     next.classList.add("active");
     PAGES.currentPage = next;
+    history.pushState(null, null, APP.homePage + APP.name);
+    APP.currentPage = next;
   },
 };
 
@@ -295,7 +336,21 @@ const STORAGE = {
 
 //nav is for anything connected to the history api and location
 const NAV = {
-  //this will be used in Assign 4
+  handleAddress(name, id = null) {
+    console.log("inside NAV object");
+    if (id) {
+      history.pushState({}, `${name}`, `${APP.homePage}${name}/${id}`);
+    } else if (name) {
+      //history.replaceState({}, `${name}`, `${APP.homePage}${name}me!`);
+      history.pushState({}, `${name}`, `${APP.homePage}${name}`);
+    } else {
+      //history.replaceState({}, null, `${APP.homePage}`);
+      history.pushState({}, null, `${APP.homePage}`);
+
+      APP.hash = location.hash;
+      console.log(APP.hash);
+    }
+  },
 };
 
 //Start everything running

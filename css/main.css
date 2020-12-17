@@ -156,7 +156,6 @@ header form {
   position: absolute;
   top: 0vh;
   min-height: 100vh;
-  ;
 }
 
 #actorsList,
@@ -303,7 +302,7 @@ header form {
 @keyframes glow {
   0% {
     box-shadow: none;
-    transform: rotate(0deg);
+    transform: scale(0deg);
   }
   50% {
     box-shadow: 10px 10px 10px grey, -10px -10px 10px grey;
