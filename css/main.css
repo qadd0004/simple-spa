@@ -310,7 +310,48 @@ header form {
   box-shadow: none;
 }
 
+/***********************
+  Fetch Modal
+************************/
+.overlay{
+  position: fixed;
+  right: 0;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 2000;
+  background: rgba(40, 0, 0, 0.7);  
+  cursor: pointer;
+}
+.dialog {
+  position: fixed;
+  right: 25vw;
+  left: 25vw;
+  top: 25vh;
+  min-height: 15rem;
+  max-width: 45rem;
+  z-index: 5000;
+  background: rgb(249, 229, 221);
+  padding: 2rem;
+  box-shadow: 5px 5px 5px rgb(0,0,0);
+  /* transition: transform 0.7s linear; */
+}
 
+.hidden{
+  display: none;
+}
+
+.display {
+  display: block;
+}
+
+
+.sleep{
+  transform: translateX(-200%);
+}
+.wake-up {
+  animation: slid-in 1.5s infinite linear backwards;
+}
 /***********************
   Effects
 ***********************/
@@ -355,6 +396,15 @@ header form {
   }
   100% {
     transform: rotate(0deg);
+  }
+}
+
+@keyframes slide-in {
+  0% {
+    transform: translateX(-200%);
+  }
+  100% {
+    transform: translateX(0);
   }
 }
 

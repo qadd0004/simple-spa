@@ -64,6 +64,7 @@ const APP = {
         /*check if the same search was already stored locally, if so, skip the fetch, and get its data from localStorage immediately for faster app response avoiding unnecessary http requests/API calls */
         if (localStorage[APP.actor] == undefined) {
           APP.dataLocal = false;
+          //SEARCH.observeContent();
           ACTORS.getActor(name, APP.dataLocal);
           PAGES.switchPage(PAGES["currentPage"], PAGES["actors"]);
         } else {
@@ -111,6 +112,7 @@ const ACTORS = {
   searchResults: null,
   getActor(actor, locally) {
     if (!locally) {
+      SEARCH.observeContent();
       let url = `https://api.themoviedb.org/3/search/person?api_key=803734898f6659797a0f7e7dc6a24147&language=en-US&query=${actor}&page=1&include_adult=false`;
 
       fetch(url)
@@ -185,8 +187,8 @@ const ACTORS = {
       popularity.innerHTML = "<span>&star;</span>".repeat(pop);
       card.append(popularity);
 
-      list.append(card);
       card.addEventListener("click", (ev) => MEDIA.getMedia(ev, actorObject));
+      list.append(card);
     });
   },
   sortActors(ev) {
@@ -261,6 +263,58 @@ const SEARCH = {
   },
   // results contain named objects for easier access.
   results: {},
+  observeContent() {
+    displayOverlay();
+    // Select the DOM node that will be observed for mutations
+    const actorsList = document.querySelector("#actorsList");
+
+    function displayOverlay() {
+      let overlay = document.querySelector(".overlay");
+      overlay.classList.remove("hidden");
+      overlay.classList.add("display");
+      displayDia();
+    }
+
+    function displayDia() {
+      let dialog = document.querySelector(".dialog");
+      dialog.classList.remove("sleep");
+      dialog.classList.add("wake-up");
+    }
+
+    function hideDia() {
+      let dialog = document.querySelector(".dialog");
+      dialog.classList.remove("wake-up");
+      dialog.classList.add("sleep");
+    }
+
+    function hideOverlay() {
+      let overlay = document.querySelector(".overlay");
+      overlay.classList.remove("display");
+      overlay.classList.add("hidden");
+      hideDia();
+    }
+
+    // Options for the observer (which mutations to observe)
+    const config = { attributes: false, childList: true, subtree: true };
+
+    // observant function to execute when mutations are observed
+    const observant = function (mutationsList, observer) {
+      for (const mutation of mutationsList) {
+        if (mutation.type === "childList") {
+          hideOverlay();
+        } else {
+          return;
+        }
+      }
+    };
+
+    // Create an observer instance linked to the callback function
+    const observer = new MutationObserver(observant);
+
+    // Start observing the target node for configured mutations
+    observer.observe(actorsList, config);
+    //observer.disconnect();
+  },
 };
 
 //media is for changes connected to content in the media section
