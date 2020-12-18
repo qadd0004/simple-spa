@@ -42,6 +42,10 @@ const APP = {
       searchBtn.style.outline = "none";
       PAGES.switchPage(PAGES["currentPage"], PAGES["actors"]);
 
+      document
+        .querySelector(".sort")
+        .addEventListener("click", ACTORS.sortActors);
+
       if (PAGES.actors.classList.contains("active")) {
         MEDIA.actorsBtn.classList.remove("act");
         MEDIA.actorsBtn.removeEventListener("click", MEDIA.showActors);
@@ -104,6 +108,7 @@ const APP = {
 
 //actors is for changes connected to content in the actors section
 const ACTORS = {
+  searchResults: null,
   getActor(actor, locally) {
     if (!locally) {
       let url = `https://api.themoviedb.org/3/search/person?api_key=803734898f6659797a0f7e7dc6a24147&language=en-US&query=${actor}&page=1&include_adult=false`;
@@ -119,7 +124,8 @@ const ACTORS = {
         .then(function (data) {
           SEARCH.results[actor] = data.results;
           STORAGE.storeSearch(data.results, APP.actor);
-          ACTORS.card(data.results);
+          ACTORS.searchResults = data.results;
+          ACTORS.card(ACTORS.searchResults);
         })
         .catch((err) => {
           //handle the error
@@ -128,7 +134,8 @@ const ACTORS = {
     } else {
       console.log("fetch locally- inside get actor");
       console.log(APP.actor);
-      ACTORS.card(JSON.parse(localStorage[APP.actor]));
+      ACTORS.searchResults = JSON.parse(localStorage[APP.actor]);
+      ACTORS.card(ACTORS.searchResults);
     }
   },
 
@@ -181,6 +188,49 @@ const ACTORS = {
       list.append(card);
       card.addEventListener("click", (ev) => MEDIA.getMedia(ev, actorObject));
     });
+  },
+  sortActors(ev) {
+    if (ev.target.textContent == "Name") {
+      ev.preventDefault();
+      ev.target.classList.toggle("name-ascend");
+
+      if (ev.target.classList.contains("name-ascend")) {
+        ACTORS.searchResults.sort((a, b) => {
+          if (a["name"].toLowerCase() > b["name"].toLowerCase()) return 1;
+          else if (b["name"].toLowerCase() > a["name"].toLowerCase()) return -1;
+          else return 0;
+        });
+        ACTORS.card(ACTORS.searchResults);
+      } else {
+        ev.preventDefault();
+        ACTORS.searchResults.sort((a, b) => {
+          if (a["name"].toLowerCase() < b["name"].toLowerCase()) return 1;
+          else if (b["name"].toLowerCase() < a["name"].toLowerCase()) return -1;
+          else return 0;
+        });
+        ACTORS.card(ACTORS.searchResults);
+      }
+    }
+    if (ev.target.textContent == "Popularity") {
+      ev.preventDefault();
+      ev.target.classList.toggle("pop-ascend");
+      if (ev.target.classList.contains("pop-ascend")) {
+        ACTORS.searchResults.sort((a, b) => {
+          if (a["popularity"] > b["popularity"]) return 1;
+          else if (b["popularity"] > a["popularity"]) return -1;
+          else return 0;
+        });
+        ACTORS.card(ACTORS.searchResults);
+      } else {
+        ev.preventDefault();
+        ACTORS.searchResults.sort((a, b) => {
+          if (a["popularity"] < b["popularity"]) return 1;
+          else if (b["popularity"] < a["popularity"]) return -1;
+          else return 0;
+        });
+        ACTORS.card(ACTORS.searchResults);
+      }
+    }
   },
 };
 
@@ -246,6 +296,7 @@ const MEDIA = {
 
         MEDIA.actorsBtn.classList.add("act");
         MEDIA.actorsBtn.addEventListener("click", MEDIA.showActors);
+        document.querySelector(".sort").style.display = "none";
         history.pushState(
           {},
           "Actors",
@@ -321,6 +372,9 @@ const PAGES = {
     PAGES.currentPage = next;
     history.pushState(null, null, APP.homePage + APP.name);
     APP.currentPage = next;
+    if (PAGES.actors.classList.contains("active")) {
+      document.querySelector(".sort").style.display = "block";
+    }
   },
 };
 

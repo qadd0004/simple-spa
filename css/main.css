@@ -125,6 +125,10 @@ header form {
   min-width: 65vw;
 }
 
+.sort {
+  display: none;
+}
+
 #nameSort,
 #popSort {
   margin: 0.5rem;
@@ -398,6 +402,7 @@ header form {
 
   .sort {
     font-size: 1.2rem;
+    display: none;
   }
 
   #instructions p {
