@@ -52,16 +52,26 @@
         </div>
         <h1><span>Actors</span> &amp; Shows</h1>
       </div>
-      <form class="right">
-        <input type="search" id="search" value="" placeholder="Actor Name" />
-        <button id="btnSearch" class="pulse">
-          <img
-            src="img/magnifying-glass.svg"
-            data-src="img/magnifying-glass.svg"
-            class="iconic"
-          />
-        </button>
-      </form>
+      <div class="right">
+        <form>
+          <input type="search" id="search" value="" placeholder="Actor Name" />
+          <button id="btnSearch" class="pulse">
+            <img
+              src="img/magnifying-glass.svg"
+              data-src="img/magnifying-glass.svg"
+              class="iconic"
+            />
+          </button>
+        </form>
+        <div class="sort">
+          <p>
+            <span
+              >Sort By: <a href="#" id="nameSort">Name</a>
+              <a href="#" id="popSort">Popularity</a></span
+            >
+          </p>
+        </div>
+      </div>
     </header>
     <main id="main">
       <section id="instructions" class="active" data-role="page">
