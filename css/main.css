@@ -194,6 +194,19 @@ header form {
   margin: 1rem auto;
 }
 
+#error {
+  color: red;
+  font-size: 3rem;
+  display: none;
+  position: relative;
+  z-index: 1000;
+}
+
+#error.active {
+  display: block;
+
+}
+
 
 .card {
   width: 16.2rem;
@@ -350,7 +363,7 @@ header form {
   transform: translateX(-200%);
 }
 .wake-up {
-  animation: slid-in 1.5s infinite linear backwards;
+  animation: slid-in 1s infinite linear backwards;
 }
 /***********************
   Effects

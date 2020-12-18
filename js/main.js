@@ -112,7 +112,7 @@ const ACTORS = {
   searchResults: null,
   getActor(actor, locally) {
     if (!locally) {
-      SEARCH.observeContent();
+      //SEARCH.observeContent();
       let url = `https://api.themoviedb.org/3/search/person?api_key=803734898f6659797a0f7e7dc6a24147&language=en-US&query=${actor}&page=1&include_adult=false`;
 
       fetch(url)
@@ -145,9 +145,7 @@ const ACTORS = {
     console.log(result);
     config = SEARCH.config;
     if (result.length === 0) {
-      alert(
-        `There is no actor/actress with that name, please check your spelling and try again`
-      );
+      alert(`FAILED TO FETCH THE RELEVANT DATA FROM THE MOVE DATABASE`);
       PAGES.switchPage(PAGES["currentPage"], PAGES["instr"]);
       return;
     }
