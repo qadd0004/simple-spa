@@ -119,7 +119,7 @@ header form {
 
 #btnSearch.pulse:focus {
   animation-play-state: paused;
-} 
+}
 
 /*******************
   content area
@@ -139,6 +139,7 @@ header form {
   max-width: 90%;
   position: absolute;
   left: 0.8rem;
+  top: 1.5rem;
   margin: 0rem auto;
 }
 
@@ -152,7 +153,6 @@ header form {
   position: absolute;
   top: 0vh;
   min-height: 100vh;
-  ;
 }
 
 #actorsList,
@@ -165,14 +165,13 @@ header form {
   margin: 1rem auto;
 }
 
-
 .card {
   width: 16.2rem;
   height: 8.1rem;
   background-color: #fff;
   border: 1px solid #000;
   display: grid;
-  grid-template-areas: 'picture name''picture pop''picture .';
+  grid-template-areas: 'picture name' 'picture pop' 'picture .';
   grid-template-columns: 34% 66%;
   grid-template-rows: 50%;
   box-shadow: 3px 3px 3px grey;
@@ -210,7 +209,6 @@ header form {
 .card:hover {
   animation: shake 2s linear infinite alternate backwards;
 }
-
 
 #media {
   display: none;
@@ -274,7 +272,6 @@ header form {
   background-color: #772222;
   box-shadow: none;
 }
-
 
 /***********************
   Effects
@@ -352,7 +349,6 @@ header form {
     font-size: 3rem;
     margin-bottom: 2rem;
   }
-
 }
 
 @media all and (min-width: 50rem) {
@@ -411,7 +407,6 @@ header form {
     font-size: 8rem;
     left: 4rem;
   }
-
 }
 
 @media all and (min-width: 80rem) {
